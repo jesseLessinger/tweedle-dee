@@ -5,12 +5,18 @@ $(document).ready(function(){
   let $pauseButton = $('#pause-button')
   let $allTweetsButton = $('#all-tweets-button');
   let $feedHeader = $('#feed-header')
+  let $tweetsPerPageSetting = $('#tweets-per-page');
+  let $pageNum = $('#page-number')
+
 
   //determines the number of tweets display in a feed
-  let maxTweetsUserSetting = 25;
-  
+  let maxTweetsUserSetting = $tweetsPerPageSetting.val();  //default comes from HTML input value
+  //keeps track of page number to display
+  let pageNum = 1;
   //keeps track of the current feed, for refresh purposes
   let currentFeed = streams.home;
+
+
 
   //****  CLICK EVENTS FOR BUTTONS 
 
@@ -30,6 +36,18 @@ $(document).ready(function(){
     renderTweets(currentFeed, maxTweetsUserSetting)
   })
 
+  //tweets per page button
+  $tweetsPerPageSetting.on("keyup", function(){
+    maxTweetsUserSetting = $tweetsPerPageSetting.val();
+    renderTweets(currentFeed, maxTweetsUserSetting);
+  })
+
+  //change page number
+  $pageNum.on("keyup", function(){
+    pageNum = $pageNum.val();
+    if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting);
+  })
+
 
 
   // RENDER all tweets for initial page load
@@ -43,9 +61,12 @@ $(document).ready(function(){
 
   //DISPLAY TWEETS takes a feed and max # of tweets to display, default 15
   function renderTweets(feed, maxTweets = 15) {
-    $tweetFeed.html('') //clear the tweet field
-    maxTweets = maxTweets > feed.length ? feed.length : maxTweets;
-    var index = feed.length - 1;
+    //$tweetFeed.html('') //clear the tweet field
+    $('.tweet').remove();
+    let index = feed.length - 1 - ((pageNum-1) * maxTweets) //start at latest tweet in current page
+    console.log(index)
+    maxTweets = maxTweets > index + 1 ? index + 1 : maxTweets;
+    //let index = (feed.length - 1);
     for (let i = 0; i < maxTweets; i++ ) {
       let tweet = feed[index];
       let timeStamp = readableDate(tweet.created_at);

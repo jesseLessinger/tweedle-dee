@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="jquery.js"></script>
-    <script src="data_generator.js"></script>
+    <script src="src/jquery.js"></script>
+    <script src="src/data_generator.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="src/index.js"></script>
   </head>
@@ -15,13 +15,18 @@
       <div id="main-contents" class="">
         <input id="pause-button" type="button" value="refresh" class="btn-info" />
         <input id="all-tweets-button" type="button" value="home feed" class="btn-primary" />
+        <input id="tweets-per-page" type="text" value="25" size="1"> tweets per page
         
         <div id="tweet-feed-container">
           <h2 id="feed-header">Home</h2>
           <div id="tweet-feed"></div>
-
+          <input id="prev-page" type="button" value="<" />
+         <input id="page-number" type="text" value="1" size="1" />
+         <input id="next-page" type="button" value=">" />
         </div>
         
+        
+
       </div>
 
     </div>
