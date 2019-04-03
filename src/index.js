@@ -1,46 +1,73 @@
 $(document).ready(function(){
  
   //select some useful jQuery objects from DOM
-  var $tweetFeed = $('#tweet-feed')
-  var $pauseButton = $('#pause-button')
- // var $allTweetsButton = $('#all-tweets-button');
+  let $tweetFeed = $('#tweet-feed')
+  let $pauseButton = $('#pause-button')
+  let $allTweetsButton = $('#all-tweets-button');
+  let $feedHeader = $('#feed-header')
 
-  //add click events for buttons
+  //determines the number of tweets display in a feed
+  let maxTweetsUserSetting = 25;
+  
+  //keeps track of the current feed, for refresh purposes
+  let currentFeed = streams.home;
+
+  //****  CLICK EVENTS FOR BUTTONS 
+
+  //refresh button (later to start/start)
   let paused = false;
   $pauseButton.on("click", function(e){
     // if (paused) $pauseButton.attr("value", "pause")
     // else $pauseButton.attr("value", "start")
     paused = !paused;
-    displayTweets(streams.home, 25);
+    renderTweets(currentFeed, maxTweetsUserSetting);
   });
  
-
-  displayTweets(streams.home);
-
-
-
-  $('.user').on("click", function(e){
-    console.log("click")
-    let user = $(e.currentTarget).text();
-    displayTweets(streams.users[user],25)
+  //home feed button
+  $allTweetsButton.on("click", function(){
+    $feedHeader.text('Home')
+    currentFeed = streams.home;
+    renderTweets(currentFeed, maxTweetsUserSetting)
   })
 
+
+
+  // RENDER all tweets for initial page load
+  renderTweets(streams.home, maxTweetsUserSetting);
+
+
+
+
+  //  *********** HELPER FUNCTIONS  **********
+  
+
   //DISPLAY TWEETS takes a feed and max # of tweets to display, default 15
-  function displayTweets(feed, maxTweets = 15) {
+  function renderTweets(feed, maxTweets = 15) {
     $tweetFeed.html('') //clear the tweet field
     maxTweets = maxTweets > feed.length ? feed.length : maxTweets;
     var index = feed.length - 1;
     for (let i = 0; i < maxTweets; i++ ) {
-      var tweet = feed[index];
-      var timeStamp = readableDate(tweet.created_at);
-      var $tweet = $(`<div class="tweet" style="display:flex; flex-direction:row">
-                        @<div class="user">${tweet.user}</div>
+      let tweet = feed[index];
+      let timeStamp = readableDate(tweet.created_at);
+      let $tweet = $(`<div class="tweet" style="display:flex; flex-direction:row">                     
+                        <div class="user">@${tweet.user}</div>
                         <div class="time-stamp"> (${timeStamp}) </div>
                         <div class="tweet-message"> ${tweet.message}</div>
                       </div>`);
+      
+      //add a click function to display the users tweets
+      $tweet.on("click", function(){
+        $feedHeader.text(tweet.user)
+        currentFeed = streams.users[tweet.user];
+        renderTweets(streams.users[tweet.user], maxTweetsUserSetting);
+      })
+      
       $tweet.appendTo($tweetFeed);
       index -= 1;
     }
+    
+
+  }
 
     ///find a js library for this, man
     function readableDate(date) {
@@ -78,7 +105,7 @@ $(document).ready(function(){
     //   index -= 1;
     // }
 
-  }
+ 
 
 
   
