@@ -2,14 +2,19 @@ $(document).ready(function(){
  
   //select some useful jQuery objects from DOM
   let $tweetFeed = $('#tweet-feed')
-  let $pauseButton = $('#pause-button')
+  let $pauseButton = $('#pause-button') 
   let $allTweetsButton = $('#all-tweets-button');
   let $feedHeaderTitle = $('#feed-header-title');
   let $tweetsPerPageSetting = $('#tweets-per-page');
   let $pageNum = $('#page-number');
   let $prevPage = $('#prev-page').attr('disabled', true);
   let $nextPage = $('#next-page');
-
+  let $newMessage = $('#new-tweet-message');
+  let $postMessageButton = $('#post-message-button');
+  
+  //new user
+  let newUser = "jsnow";
+  streams.users[newUser] = [];
 
   //determines the number of tweets display in a feed
   let maxTweetsUserSetting = 6;
@@ -23,12 +28,22 @@ $(document).ready(function(){
 
   //****  CLICK EVENTS FOR BUTTONS 
 
-  //refresh button (later to start/start)
-  //let paused = false;
-  $pauseButton.on("click", function(e){
-    // if (paused) $pauseButton.attr("value", "pause")
-    // else $pauseButton.attr("value", "start")
-    //paused = !paused;
+  //post message button
+  $postMessageButton.on("click", function(){
+    let newTweet = {
+      user: newUser,
+      message: $newMessage.val(),
+      created_at: new Date()
+    }
+    streams.home.push(newTweet);
+    streams.users[newUser].push(newTweet);
+    $newMessage.val('');
+  })
+
+  //pause/start button
+  $pauseButton.on("click", function(){
+    if ($pauseButton.val() === "pause") $pauseButton.val("start")
+    else $pauseButton.val("pause");
     renderTweets(currentFeed, maxTweetsUserSetting);
   });
  
@@ -58,11 +73,16 @@ $(document).ready(function(){
     if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting);
   });
 
+  $
 
+  // ****** RENDER TWEET FEED **** 
+  //refeshes automatically every second
 
-  // ****** RENDER **** all tweets for initial page load
-  renderTweets(streams.home, maxTweetsUserSetting);
-
+  var refreshTweets = function(){
+    if ($pauseButton.val() === "pause") renderTweets(currentFeed, maxTweetsUserSetting);
+    setTimeout(refreshTweets, 1000);
+  };
+  refreshTweets();
 
 
 

@@ -7,23 +7,37 @@
     <link rel="stylesheet" href="css/site.css" />
     <script src="src/index.js"></script>
   </head>
+
+
   <body>
+
     <div id="all-contents" class="">
 
-      <header id="header" class="jumbotron">
-        <input id="all-tweets-button" type="button" value="Tiddle Dee" class="btn btn-primary" />
+      <header id="header" margin-top: -0.4rem; class="jumbotron">
+        <input id="all-tweets-button" type="button" value="Twiddle Dee" class="btn btn-primary" />
       </header>
+
+
       <div id="main-contents" class="">
         
-        
+        <div id="new-tweet-container">
+          user name: <input id="new-user" type="text" placeholder="what's your name, dood?" >
+          <input id="add-user-button" type="button" class="btn btn-primary" value="register">
+
+          new message: <input id="new-tweet-message" type="text" placeholder="what's on your mind, dood?"/>
+          <input id="post-message-button" type="button" class="btn btn-primary" value="post">
+        </div>
+
+
         <div id="tweet-feed-container">
+
           <div id="feed-header">
+            <input id="pause-button" type="button" value="pause" class="btn btn-info" />
+            <input id="tweets-per-page" type="text" value="5" size="1"> tweets per page
+            <img id="header-avatar">
             <h2 id="feed-header-title"></h2>
           </div>
-          
-          <input id="pause-button" type="button" value="refresh" class="btn btn-info" />
-          <input id="tweets-per-page" type="text" value="5" size="1"> tweets per page
-          
+                    
           <div id="tweet-feed"></div>
 
           <div id="feed-footer">

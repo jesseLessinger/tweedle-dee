@@ -6,6 +6,10 @@ div {
     padding: 3px;
 }
 
+#header {
+    background-color: #2b3746;
+}
+
 #main-contents {
     background-color: white;
     max-width: 80%;
@@ -16,6 +20,7 @@ div {
 
 #feed-header-title {
     color: coral;
+    margin: 1rem 0 0 0;
 }
 
 .tweet {
