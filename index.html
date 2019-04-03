@@ -4,25 +4,36 @@
     <script src="src/jquery.js"></script>
     <script src="src/data_generator.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/site.css" />
     <script src="src/index.js"></script>
   </head>
   <body>
     <div id="all-contents" class="">
 
       <header id="header" class="jumbotron">
-        Twiddle Dee
+        <input id="all-tweets-button" type="button" value="Tiddle Dee" class="btn btn-primary" />
       </header>
       <div id="main-contents" class="">
-        <input id="pause-button" type="button" value="refresh" class="btn-info" />
-        <input id="all-tweets-button" type="button" value="home feed" class="btn-primary" />
-        <input id="tweets-per-page" type="text" value="25" size="1"> tweets per page
+        
         
         <div id="tweet-feed-container">
-          <h2 id="feed-header">Home</h2>
+          <div id="feed-header">
+            <h2 id="feed-header-title"></h2>
+          </div>
+          
+          <input id="pause-button" type="button" value="refresh" class="btn btn-info" />
+          <input id="tweets-per-page" type="text" value="5" size="1"> tweets per page
+          
           <div id="tweet-feed"></div>
-          <input id="prev-page" type="button" value="<" />
-         <input id="page-number" type="text" value="1" size="1" />
-         <input id="next-page" type="button" value=">" />
+
+          <div id="feed-footer">
+            <input id="prev-page" type="button" class="btn btn-info" value="<" />
+           <div>page</div> 
+           <div id="page-number">1</div>
+            <!-- <input id="page-number" type="text" value="1" size="1" /> -->
+           <input id="next-page" type="button" class="btn btn-info" value=">" />
+          </div>
+          
         </div>
         
         

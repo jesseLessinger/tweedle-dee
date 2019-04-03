@@ -1,0 +1,65 @@
+body {
+  background-color: #dde5e6;
+}
+
+div {
+    padding: 3px;
+}
+
+#main-contents {
+    background-color: white;
+    max-width: 80%;
+    margin: auto;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.34);
+
+}
+
+#feed-header-title {
+    color: coral;
+}
+
+.tweet {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 3px #00000059;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+}
+
+.tweet-header {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    padding-bottom: 0;
+    cursor: pointer; cursor: hand;
+}
+
+.tweet-message {
+    margin-left: 2rem;
+    margin-top: -0.4rem;
+    font-size: 1.7rem;
+    color: #9262bf;
+    font-style: oblique;
+    padding-bottom: 0.5rem;
+   
+}
+
+.user {
+    font-weight: bold;
+    color: #7b6659;
+}
+
+.time-stamp {
+    font-size: 90%;
+    font-style: italic;
+    color: #b18b68;
+}
+
+#tweet-feed-container {
+
+    padding: 10px;
+}
+
+#feed-footer {
+    display: flex;
+}
