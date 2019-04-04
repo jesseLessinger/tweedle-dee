@@ -21,7 +21,7 @@ $(document).ready(function(){
   streams.users.images = {};
   let avatars = streams.users.images;
   users.forEach(function(userName){
-    avatars[userName] = `images/avatars/${Math.floor(Math.random()*5)}.jpg`;
+    avatars[userName] = `images/avatars/${Math.floor(Math.random()*6)}.jpg`;
   })
   
   //new user 
