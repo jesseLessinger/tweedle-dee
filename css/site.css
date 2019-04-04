@@ -26,7 +26,30 @@ input {
     font-weight: bold;
     font-size: 1.4rem;
     color: crimson;
+    width: 15rem;
+}
 
+#user-section {
+    display: flex;
+    flex-direction: row;
+    background-color: #e1e1ec;
+    padding: .5rem;
+}
+
+#user-section-avatar {
+    height: 12rem;
+    
+}
+
+#new-tweet-container {
+    padding: .5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+#post-message-button {
+    width: 5rem;
 }
 
 #feed-head {
@@ -44,6 +67,10 @@ input {
     height: 5rem;
     box-shadow: 0 0 2px grey;
     margin: 2px;
+}
+
+.tweet-avatar {
+    height: 1.8rem;
 }
 
 #feed-header-title {
@@ -67,13 +94,13 @@ input {
 .tweet-header {
     display: flex;
     flex-direction: row;
-    align-items: baseline;
+    align-items: center;
     padding-bottom: 0;
     cursor: pointer; cursor: hand;
 }
 
 .tweet-message {
-    margin-left: 2rem;
+    margin-left: 5rem;
     margin-top: -0.4rem;
     font-size: 1.2rem;
     color: #9262bf;

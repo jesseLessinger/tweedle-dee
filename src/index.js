@@ -12,16 +12,16 @@ $(document).ready(function(){
   let $newMessage = $('#new-tweet-message');
   let $postMessageButton = $('#post-message-button');
   let $newUserContainer = $('#new-user-container');
-  let $newTweetContainer = $('#new-tweet-container').hide();
   let $newUserButton = $('#add-user-button')
   let $newUser = $('#new-user')
   let $headerAvatarContainer =  $('#header-avatar-container').hide();
+  let $userSection = $('#user-section').hide();
 
   //add some avatar images
   streams.users.images = {};
   let avatars = streams.users.images;
   users.forEach(function(userName){
-    avatars[userName] = `images/avatars/${Math.floor(Math.random()*6)}.jpg`;
+    avatars[userName] = randomAvatar();
   })
   
   //new user 
@@ -60,10 +60,12 @@ $(document).ready(function(){
   $newUserButton.on("click", function(){
     newUser = $newUser.val();
     streams.users[newUser] = [];
+    avatars[newUser] = randomAvatar();
+    $('#user-section-avatar').attr('src', avatars[newUser])
     $newMessage.attr('placeholder', `what's on your mind, ${newUser}?`)
     $newUserContainer.hide();
-    $(`<div id="user">@${newUser}</div>`).hide().prependTo($('#main-contents')).fadeIn(1000);
-    $newTweetContainer.fadeIn(1000);
+    $(`<div id="user">@${newUser}</div>`).hide().prependTo($('#new-tweet-container')).fadeIn(1000);
+    $userSection.fadeIn(1000);
   })
 
   $newUser.on("keyup", function(key){
@@ -163,9 +165,10 @@ $(document).ready(function(){
                         <div class="tweet-message"> ${tweet.message}</div>
                       </div>`);
       let $tweetHeader = $(`<div class="tweet-header"> 
-                      <div class="user">@${tweet.user}</div>
-                      <div class="time-stamp"> ${timeStamp} </div>
-                    </div>`).prependTo($tweet);
+                              <img class="tweet-avatar" src="${avatars[tweet.user]}" />
+                              <div class="user">@${tweet.user}</div>
+                              <div class="time-stamp"> ${timeStamp} </div>
+                         </div>`).prependTo($tweet);
                   
       
       //display @users feed - click function
@@ -189,7 +192,16 @@ $(document).ready(function(){
 
   }
 
+  //randomAvatar generator
+  function randomAvatar() {
+    return `images/avatars/${Math.floor(Math.random()*6)}.jpg`;
+  }
 
+  //returns a string with all #tags wrapped in div
+  //
+  function wrapTags(message) {
+
+  }
 
   ///find a js library for this, man
   function relativeDate(tweetDate) {
