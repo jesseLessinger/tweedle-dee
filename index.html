@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="css/site.css" />
     <script src="src/index.js"></script>
+    <script src="src/moment.js"></script>
   </head>
 
 
@@ -13,22 +14,28 @@
 
     <div id="all-contents" class="">
 
-      <header id="header" margin-top: -0.4rem; class="jumbotron">
-        <input id="all-tweets-button" type="button" value="Twiddle Dee" class="btn btn-primary" />
+      <header id="header" >
+        <!-- <input id="all-tweets-button" type="button" value="Twiddle Dee" class="btn btn-primary" /> -->
+        <h1 id="all-tweets-button">Tweedle Dee</h1>
       </header>
 
 
-      <div id="main-contents" class="">
+      <div id="main-contents">
 
         <div id="new-user-container">
-          <input id="new-user" type="text" placeholder="what's your name, dood?" />
-          <input id="add-user-button" type="button" class="btn btn-primary" value="register" />
+          <div class="flex-column">
+            <p class="center">Welcome to Tweeddle Dee.</p>
+            <p class="center">Please sign up to start.</p></div>
+          <div class="center">
+            <input id="new-user" type="text" placeholder="enter username here" />
+            <input id="add-user-button" type="button" class="btn btn-primary" value="sign up" />
+          </div>
         </div>
         
         <div id="user-section">
           <img id="user-section-avatar" />
           <div id="new-tweet-container">
-            <textarea id="new-tweet-message" rows="3" cols="50" placeholder="what's on your mind, dood?"></textarea>
+            <textarea id="new-tweet-message" rows="3" cols="50" maxlength="150" placeholder="what's on your mind, dood?"></textarea>
             <input id="post-message-button" type="button" class="btn btn-primary" value="post">
           </div>
         </div>
@@ -51,7 +58,7 @@
                     
           <div id="tweet-feed"></div>
 
-          <div id="feed-footer">
+          <div id="feed-footer" class="center">
             <input id="prev-page" type="button" class="btn btn-info" value="<" />
            <div>page</div> 
            <div id="page-number">1</div>

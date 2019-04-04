@@ -16,6 +16,7 @@ $(document).ready(function(){
   let $newUser = $('#new-user')
   let $headerAvatarContainer =  $('#header-avatar-container').hide();
   let $userSection = $('#user-section').hide();
+  let $tweetFeedContainer = $('#tweet-feed-container').hide();
 
   //add some avatar images
   streams.users.images = {};
@@ -25,7 +26,7 @@ $(document).ready(function(){
   })
 
   //set up tags streams - this should really be in data_generator.js
-  streams.tags = {}
+  streams.tags = {};
   
   //new user 
   let newUser = "guest_user";
@@ -42,11 +43,37 @@ $(document).ready(function(){
 
   //****  CLICK EVENTS FOR BUTTONS  *****
 
+  //register new user botton
+  $newUserButton.on("click", function(){
+    newUser = $newUser.val();
+    if (newUser.length === 0) { //check if something was actually entered
+      $newUser.attr('placeholder', "that's not a name");
+      return;
+    }
+    $newUserContainer.hide();
+    //set up new user stream, avatar, and clickable header 
+    streams.users[newUser] = [];
+    avatars[newUser] = randomAvatar();
+    $('#user-section-avatar').attr('src', avatars[newUser])
+    $newMessage.attr('placeholder', `what's on your mind, ${newUser}?`)
+    $(`<div id="user">@${newUser}</div>`)
+      .on("click", function(){
+        changeFeed(streams.users[newUser]);
+      }).hide().prependTo($('#new-tweet-container')).fadeIn(1000);
+    
+    $userSection.fadeIn(1000);
+    $tweetFeedContainer.slideDown(1000);
+  })
+
+  $newUser.on("keyup", function(key){
+    if (key.which === 13) $newUserButton.click(); //enter key pressed
+  })
+
   //post message button
   $postMessageButton.on("click", function(){
     let newTweet = {
       user: newUser,
-      message: $newMessage.val(),
+      message: $newMessage.val().trim(),
       created_at: new Date()
     }
     streams.home.push(newTweet);
@@ -59,21 +86,6 @@ $(document).ready(function(){
     if (key.which === 13) $postMessageButton.click(); //enter key pressed
   })
 
-  //register new user botton
-  $newUserButton.on("click", function(){
-    newUser = $newUser.val();
-    streams.users[newUser] = [];
-    avatars[newUser] = randomAvatar();
-    $('#user-section-avatar').attr('src', avatars[newUser])
-    $newMessage.attr('placeholder', `what's on your mind, ${newUser}?`)
-    $newUserContainer.hide();
-    $(`<div id="user">@${newUser}</div>`).hide().prependTo($('#new-tweet-container')).fadeIn(1000);
-    $userSection.fadeIn(1000);
-  })
-
-  $newUser.on("keyup", function(key){
-    if (key.which === 13) $newUserButton.click(); //enter key pressed
-  })
 
 
   //pause/start button
@@ -91,6 +103,7 @@ $(document).ready(function(){
     $headerAvatarContainer.hide();
     changeFeed(streams.home);
   })
+
 
   //tweets per page setting input
   $tweetsPerPageSetting.on("keyup", function(key){
@@ -129,7 +142,7 @@ $(document).ready(function(){
   // *****  UPDATE TAGS FEED  ******
   var updateTags = function() {
     streams.home.forEach(tweet => {
-      getTags(tweet.message).forEach((tag)=>{
+      getTags(tweet.message).forEach( tag => {
         streams.tags[tag] = streams.tags[tag] || [];
         let tagStream = streams.tags[tag];
         if (tagStream.indexOf(tweet) === -1) tagStream.push(tweet);
@@ -137,6 +150,9 @@ $(document).ready(function(){
     })
     setTimeout(updateTags, 1000);
   }
+  updateTags();
+
+
 
 
   //  *********** HELPER FUNCTIONS  **********
@@ -151,9 +167,9 @@ $(document).ready(function(){
   // RENDER TWEETS 
   //takes a feed and max # of tweets to display, default 15
   //@fadeInDelay - milliseconds to fade feed in, default no fade
-  function renderTweets(feed, maxTweets = 15, fadeInDelay) {
+  function renderTweets(feed, maxTweets = 8, fadeInDelay) {
     //make sure tweet contain is correct size
-    $tweetFeed.css('min-height', (maxTweets * 40) +"px")  //px for each tweet
+       //$tweetFeed.css('min-height', (maxTweets * 40) +"px")  //px for each tweet
     //start at latest tweet in current page
     let index = feed.length - 1 - ((pageNum-1) * maxTweets) 
 
@@ -173,7 +189,9 @@ $(document).ready(function(){
     }
     
     //remove some tweets
-    if (index > 0) $('.tweet').remove(); 
+    //if (index >= 0) 
+    $('.tweet').remove(); 
+    if (maxTweets < 1) $('<div class="tweet non-tweet">no tweets yet...</div>').appendTo($tweetFeed)
 
     if (fadeInDelay) $tweetFeed.hide();
     //CREATE NEW TWEET ELEMENTS
@@ -182,34 +200,28 @@ $(document).ready(function(){
       let tweet = feed[index];
       let wrappedMessage = wrapTags(tweet.message);
       let timeStamp = relativeDate(tweet.created_at);     
-      let $tweet = $(`<div class="tweet">                     
-                        <div class="tweet-message"> ${wrappedMessage}</div>
-                      </div>`);
-      let $tweetHeader = $(`<div class="tweet-header"> 
-                              <img class="tweet-avatar" src="${avatars[tweet.user]}" />
-                              <div class="user">@${tweet.user}</div>
-                              <div class="time-stamp"> ${timeStamp} </div>
-                         </div>`).prependTo($tweet);
-          
-      //add tags to tag stream
-      // getTags(tweet.message).forEach((tag)=>{
-      //   streams.tags[tag] = streams.tags[tag] || [];
-      //   let tagStream = streams.tags[tag];
-      //   if (tagStream.indexOf(tweet) === -1) tagStream.push(tweet);
-      // })                 
-      
+      let $tweet = 
+        $(`<div class="tweet">                     
+          <div class="tweet-message"> ${wrappedMessage}</div>
+        </div>`);
+      let $tweetHeader = 
+        $(`<div class="tweet-header"> 
+            <img class="tweet-avatar" src="${avatars[tweet.user]}" />
+            <div class="user">@${tweet.user}</div>
+            <div class="time-stamp"> ${timeStamp} </div>
+        </div>`).prependTo($tweet);          
+
       //display @users feed - click function
       $tweetHeader.on("click", function(){
         //change/display user name and avatar
-        $feedHeaderTitle.text("@"+tweet.user)
-        $('#header-avatar').attr('src', avatars[tweet.user])
-        $headerAvatarContainer.hide().fadeIn(fadeInDelay);
+        // $feedHeaderTitle.text("@"+tweet.user)
+        // $('#header-avatar').attr('src', avatars[tweet.user])
+        // $headerAvatarContainer.hide().fadeIn(fadeInDelay);
+        changeHeader("@"+tweet.user, avatars[tweet.user])
         //change the feed
         changeFeed(streams.users[tweet.user]);
       })
       
-
-
       $tweet.appendTo($tweetFeed);
       index -= 1;
     }
@@ -217,11 +229,21 @@ $(document).ready(function(){
     //display tag - click function
     $('.tag').on("click", function(e){
       let tagName = $(e.currentTarget).text();
+      changeHeader(tagName);
       changeFeed(streams.tags[tagName]);
-    })
+    });
 
-    if (fadeInDelay) $tweetFeed.fadeIn(fadeInDelay);
+    if (fadeInDelay) $tweetFeed.slideDown(fadeInDelay);
 
+  }
+
+
+  //change header
+  function changeHeader(header, avatar) {
+    $feedHeaderTitle.text(header)
+    if (avatar) $('#header-avatar').show().attr('src', avatar)
+    else $('#header-avatar').hide();
+    $headerAvatarContainer.hide().fadeIn(500);
   }
 
   //randomAvatar generator
@@ -241,30 +263,36 @@ $(document).ready(function(){
     return message.match(/\#[a-z]*/g) || [];
   }
 
-  ///find a js library for this, man
+  
   function relativeDate(tweetDate) {
-    let tweetSec = tweetDate.getSeconds();
-    let tweetMin = tweetDate.getMinutes();
-    let tweetHrs = tweetDate.getHours();
 
-    let date = new Date(Date.now());
-    let sec = date.getSeconds();
-    let min = date.getMinutes();
-    let hrs = date.getHours(); 
-   
-    if (tweetDate.getDay() === date.getDay()) {
-      if (hrs > tweetHrs) return (hrs - tweetHrs) + " hrs ago";
-
-      if (min > tweetMin) return (min - tweetMin) + " min ago";
-
-      return "just now";
-      
-    }
-
-    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    return `${months[tweetDate.getMonth()]} ${tweetDate.getDay()}, ${tweetHrs % 12}:${tweetMin} ${tweetHrs < 12 ? "am" : "pm"}`;
+    return tweetDate.getDay() === (new Date()).getDay() ? moment(tweetDate).fromNow()
+        : moment().format('MMM Do h:mm a');
 
   }
+
+    // let tweetSec = tweetDate.getSeconds();
+    // let tweetMin = tweetDate.getMinutes();
+    // let tweetHrs = tweetDate.getHours();
+
+    // let date = new Date(Date.now());
+    // let sec = date.getSeconds();
+    // let min = date.getMinutes();
+    // let hrs = date.getHours(); 
+   
+    // if (tweetDate.getDay() === date.getDay()) {
+    //   if (hrs > tweetHrs) return (hrs - tweetHrs) + " hrs ago";
+
+    //   if (min > tweetMin) return (min - tweetMin) + " min ago";
+
+    //   return "just now";
+      
+    // }
+
+    // let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    // return `${months[tweetDate.getMonth()]} ${tweetDate.getDay()}, ${tweetHrs % 12}:${tweetMin} ${tweetHrs < 12 ? "am" : "pm"}`;
+
+ 
   
 });
 

@@ -1,5 +1,7 @@
 body {
-  background-color: #dde5e6;
+  background-color: #cecbc3;
+  font-weight: bold;
+  color: #9e886c;
 }
 
 div {
@@ -10,8 +12,20 @@ input {
     margin: 0 0.5rem;
 }
 
+#all-contents {
+    padding: 0;
+}
+
 #header {
     background-color: #2b3746;
+    padding: 4rem 2rem;
+    margin-bottom: 2rem;
+}
+
+#header h1 {
+    font-weight: bold;
+    color:coral;
+    font-size: 3rem;
 }
 
 #main-contents {
@@ -19,7 +33,15 @@ input {
     max-width: 60%;
     margin: auto;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.34);
+    padding: 0;
+}
 
+#new-user-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    height: 20rem;
 }
 
 #user {
@@ -27,18 +49,20 @@ input {
     font-size: 1.4rem;
     color: crimson;
     width: 15rem;
+    cursor: pointer;
 }
 
 #user-section {
     display: flex;
     flex-direction: row;
     background-color: #e1e1ec;
-    padding: .5rem;
+    padding: 1rem;
 }
 
 #user-section-avatar {
     height: 12rem;
-    
+    box-shadow: 0 0 3px grey;
+    border-radius: .3rem;
 }
 
 #new-tweet-container {
@@ -46,15 +70,17 @@ input {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    overflow-x: hidden;
 }
 
 #post-message-button {
     width: 5rem;
 }
 
-#feed-head {
+#feed-header {
     display: flex;
     flex-direction: column;
+    margin-left: -2rem;
 }
 
 #feed-settings, #head-avatar-container {
@@ -81,6 +107,7 @@ input {
 
 #tweets-per-page {
     margin-right: 0;
+    padding-left: .2rem;
 }
 
 .tweet {
@@ -89,6 +116,10 @@ input {
     box-shadow: 0 0 3px #00000059;
     margin: 1rem 0;
     border-radius: 0.5rem;
+}
+
+.non-tweet{
+    box-shadow: none;
 }
 
 .tweet-header {
@@ -108,13 +139,14 @@ input {
     padding-bottom: 0.5rem;
     display: flex;
     align-items: baseline;
+    font-weight: 200;
 }
 
 
 
 
 .tag {
-    color: #c88ac1;
+    color: #e97950;
     cursor: pointer;
 }
 
@@ -127,13 +159,23 @@ input {
     font-size: 90%;
     font-style: italic;
     color: #b18b68;
+    font-weight: 100;
 }
 
 #tweet-feed-container {
-
-    padding: 10px;
+    padding: 2rem 3rem;
 }
 
 #feed-footer {
     display: flex;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
 }
