@@ -11,10 +11,21 @@ $(document).ready(function(){
   let $nextPage = $('#next-page');
   let $newMessage = $('#new-tweet-message');
   let $postMessageButton = $('#post-message-button');
+  let $newUserContainer = $('#new-user-container');
+  let $newTweetContainer = $('#new-tweet-container').hide();
+  let $newUserButton = $('#add-user-button')
+  let $newUser = $('#new-user')
+  let $headerAvatarContainer =  $('#header-avatar-container').hide();
+
+  //add some avatar images
+  streams.users.images = {};
+  let avatars = streams.users.images;
+  users.forEach(function(userName){
+    avatars[userName] = `images/avatars/${Math.floor(Math.random()*5)}.jpg`;
+  })
   
-  //new user
-  let newUser = "jsnow";
-  streams.users[newUser] = [];
+  //new user 
+  let newUser = "guest_user";
 
   //determines the number of tweets display in a feed
   let maxTweetsUserSetting = 6;
@@ -26,7 +37,7 @@ $(document).ready(function(){
 
 
 
-  //****  CLICK EVENTS FOR BUTTONS 
+  //****  CLICK EVENTS FOR BUTTONS  *****
 
   //post message button
   $postMessageButton.on("click", function(){
@@ -38,7 +49,27 @@ $(document).ready(function(){
     streams.home.push(newTweet);
     streams.users[newUser].push(newTweet);
     $newMessage.val('');
+    renderTweets(currentFeed, maxTweetsUserSetting);
   })
+
+  $newMessage.on("keyup", function(key){
+    if (key.which === 13) $postMessageButton.click(); //enter key pressed
+  })
+
+  //register new user botton
+  $newUserButton.on("click", function(){
+    newUser = $newUser.val();
+    streams.users[newUser] = [];
+    $newMessage.attr('placeholder', `what's on your mind, ${newUser}?`)
+    $newUserContainer.hide();
+    $(`<div id="user">@${newUser}</div>`).hide().prependTo($('#main-contents')).fadeIn(1000);
+    $newTweetContainer.fadeIn(1000);
+  })
+
+  $newUser.on("keyup", function(key){
+    if (key.which === 13) $newUserButton.click(); //enter key pressed
+  })
+
 
   //pause/start button
   $pauseButton.on("click", function(){
@@ -49,17 +80,20 @@ $(document).ready(function(){
  
   //home feed button
   $allTweetsButton.on("click", function(){
-   $feedHeaderTitle.text('')
+    //$feedHeaderTitle.text('')
+    $headerAvatarContainer.hide();
     currentFeed = streams.home;
     pageNum = 1; $pageNum.text(pageNum);
-    renderTweets(currentFeed, maxTweetsUserSetting)
+    renderTweets(currentFeed, maxTweetsUserSetting, 500)
   })
 
-  //tweets per page button
-  $tweetsPerPageSetting.on("keyup", function(){
-    maxTweetsUserSetting = $tweetsPerPageSetting.val();
-    pageNum = 1; $pageNum.text(pageNum);
-    renderTweets(currentFeed, maxTweetsUserSetting);
+  //tweets per page setting input
+  $tweetsPerPageSetting.on("keyup", function(key){
+    if (key.which === 13) {
+      maxTweetsUserSetting = $tweetsPerPageSetting.val();
+      pageNum = 1; $pageNum.text(pageNum);
+      renderTweets(currentFeed, maxTweetsUserSetting);
+    }
   })
 
   //change pages w/ next and prev buttons
@@ -73,9 +107,11 @@ $(document).ready(function(){
     if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting);
   });
 
-  $
 
-  // ****** RENDER TWEET FEED **** 
+
+  
+
+  // ****** REFRESH TWEET FEED **** 
   //refeshes automatically every second
 
   var refreshTweets = function(){
@@ -86,12 +122,15 @@ $(document).ready(function(){
 
 
 
+
+
   //  *********** HELPER FUNCTIONS  **********
   
 
   // RENDER TWEETS 
   //takes a feed and max # of tweets to display, default 15
-  function renderTweets(feed, maxTweets = 15) {
+  //@fadeInDelay - milliseconds to fade feed in, default no fade
+  function renderTweets(feed, maxTweets = 15, fadeInDelay) {
     //make sure tweet contain is correct size
     $tweetFeed.css('min-height', (maxTweets * 40) +"px")  //px for each tweet
     //start at latest tweet in current page
@@ -115,6 +154,7 @@ $(document).ready(function(){
     //remove some tweets
     if (index > 0) $('.tweet').remove(); 
 
+    if (fadeInDelay) $tweetFeed.hide();
     //CREATE NEW TWEET ELEMENTS
     for (let i = 0; i < maxTweets; i++ ) {
       let tweet = feed[index];
@@ -128,21 +168,30 @@ $(document).ready(function(){
                     </div>`).prependTo($tweet);
                   
       
-      //add a click function to display the users tweets
+      //display @users feed - click function
       $tweetHeader.on("click", function(){
-        $feedHeaderTitle.text(tweet.user)
+        //change/display user name and avatar
+        $feedHeaderTitle.text("@"+tweet.user)
+        $('#header-avatar').attr('src', avatars[tweet.user])
+        $headerAvatarContainer.hide().fadeIn(fadeInDelay);
+        //update feed, reset pageNum to 1, render feed
         currentFeed = streams.users[tweet.user];
         pageNum = 1; $pageNum.text(pageNum);
-        renderTweets(streams.users[tweet.user], maxTweetsUserSetting);
+        renderTweets(currentFeed, maxTweetsUserSetting, 500);
       })
       
+
       $tweet.appendTo($tweetFeed);
       index -= 1;
     }
 
+    if (fadeInDelay) $tweetFeed.fadeIn(fadeInDelay);
+
   }
 
-    ///find a js library for this, man
+
+
+  ///find a js library for this, man
   function relativeDate(tweetDate) {
     let tweetSec = tweetDate.getSeconds();
     let tweetMin = tweetDate.getMinutes();
@@ -158,7 +207,7 @@ $(document).ready(function(){
 
       if (min > tweetMin) return (min - tweetMin) + " min ago";
 
-      return "seconds ago";
+      return "just now";
       
     }
 
@@ -167,47 +216,6 @@ $(document).ready(function(){
 
   }
   
-
-
-//    CODE I MIGHT USE
-
-  // clock = new Promise((resolve)=>{
-  //   setTimeout(()=>{
-  //     displayTweets(streams.home);
-  //     resolve(1)
-  //   }, 3000)
-  // })
-
-  // clock.then(()=>{
-  //   setTimeout(()=>{
-  //     displayTweets(streams.home);
-  //   }, 3000)
-  // })
-
-  // while (!paused) {
-
-    // while(index >= 0){
-    //   var tweet = feed[index];
-    //   var $tweet = $('<div></div>');
-    //   $tweet.text('@' + tweet.user + ': ' + tweet.message);
-    //   $tweet.appendTo($tweetFeed);
-    //   index -= 1;
-    // }
-
- 
-
-
-  
-
-// var index = streams.home.length - 1;
-//     while(index >= 0){
-//       var tweet = streams.home[index];
-//       var $tweet = $('<div></div>');
-//       $tweet.text('@' + tweet.user + ': ' + tweet.message);
-//       $tweet.appendTo($body);
-//       index -= 1;
-//     }
-
 });
 
 

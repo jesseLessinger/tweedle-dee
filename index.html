@@ -19,12 +19,14 @@
 
 
       <div id="main-contents" class="">
+
+        <div id="new-user-container">
+          <input id="new-user" type="text" placeholder="what's your name, dood?" />
+          <input id="add-user-button" type="button" class="btn btn-primary" value="register" />
+        </div>
         
         <div id="new-tweet-container">
-          user name: <input id="new-user" type="text" placeholder="what's your name, dood?" >
-          <input id="add-user-button" type="button" class="btn btn-primary" value="register">
-
-          new message: <input id="new-tweet-message" type="text" placeholder="what's on your mind, dood?"/>
+          <textarea id="new-tweet-message" rows="3" cols="50" placeholder="what's on your mind, dood?"></textarea>
           <input id="post-message-button" type="button" class="btn btn-primary" value="post">
         </div>
 
@@ -32,10 +34,15 @@
         <div id="tweet-feed-container">
 
           <div id="feed-header">
-            <input id="pause-button" type="button" value="pause" class="btn btn-info" />
-            <input id="tweets-per-page" type="text" value="5" size="1"> tweets per page
-            <img id="header-avatar">
-            <h2 id="feed-header-title"></h2>
+            <div id="feed-settings">
+              <input id="pause-button" type="button" value="pause" class="btn btn-info" />
+              <input id="tweets-per-page" type="text" value="5" size="1"> 
+              <div>tweets per page</div>
+            </div>
+            <div id="header-avatar-container">
+              <img id="header-avatar" />
+              <h2 id="feed-header-title"></h2>
+            </div>
           </div>
                     
           <div id="tweet-feed"></div>

@@ -6,21 +6,48 @@ div {
     padding: 3px;
 }
 
+input {
+    margin: 0 0.5rem;
+}
+
 #header {
     background-color: #2b3746;
 }
 
 #main-contents {
     background-color: white;
-    max-width: 80%;
+    max-width: 60%;
     margin: auto;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.34);
 
 }
 
+#user {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: crimson;
+
+}
+
+#feed-head {
+    display: flex;
+    flex-direction: column;
+}
+
+#feed-settings, #head-avatar-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
 #feed-header-title {
     color: coral;
     margin: 1rem 0 0 0;
+    display: inline;
+}
+
+#tweets-per-page {
+    margin-right: 0;
 }
 
 .tweet {
@@ -42,7 +69,7 @@ div {
 .tweet-message {
     margin-left: 2rem;
     margin-top: -0.4rem;
-    font-size: 1.7rem;
+    font-size: 1.2rem;
     color: #9262bf;
     font-style: oblique;
     padding-bottom: 0.5rem;
