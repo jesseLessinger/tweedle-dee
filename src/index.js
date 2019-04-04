@@ -23,6 +23,9 @@ $(document).ready(function(){
   users.forEach(function(userName){
     avatars[userName] = randomAvatar();
   })
+
+  //set up tags streams - this should really be in data_generator.js
+  streams.tags = {}
   
   //new user 
   let newUser = "guest_user";
@@ -76,17 +79,17 @@ $(document).ready(function(){
   //pause/start button
   $pauseButton.on("click", function(){
     if ($pauseButton.val() === "pause") $pauseButton.val("start")
-    else $pauseButton.val("pause");
-    renderTweets(currentFeed, maxTweetsUserSetting);
+    else {
+      $pauseButton.val("pause");
+      pageNum = 1; $pageNum.text(pageNum);
+    }
+    //renderTweets(currentFeed, maxTweetsUserSetting);
   });
  
   //home feed button
   $allTweetsButton.on("click", function(){
-    //$feedHeaderTitle.text('')
     $headerAvatarContainer.hide();
-    currentFeed = streams.home;
-    pageNum = 1; $pageNum.text(pageNum);
-    renderTweets(currentFeed, maxTweetsUserSetting, 500)
+    changeFeed(streams.home);
   })
 
   //tweets per page setting input
@@ -121,13 +124,29 @@ $(document).ready(function(){
     setTimeout(refreshTweets, 1000);
   };
   refreshTweets();
+    
 
-
-
+  // *****  UPDATE TAGS FEED  ******
+  var updateTags = function() {
+    streams.home.forEach(tweet => {
+      getTags(tweet.message).forEach((tag)=>{
+        streams.tags[tag] = streams.tags[tag] || [];
+        let tagStream = streams.tags[tag];
+        if (tagStream.indexOf(tweet) === -1) tagStream.push(tweet);
+      }) 
+    })
+    setTimeout(updateTags, 1000);
+  }
 
 
   //  *********** HELPER FUNCTIONS  **********
   
+  //when a feed changes: update current feed, reset page number to 1, and render tweets
+  function changeFeed(feed) {
+      currentFeed = feed;
+      pageNum = 1; $pageNum.text(pageNum);
+      renderTweets(currentFeed, maxTweetsUserSetting, 500);
+  }
 
   // RENDER TWEETS 
   //takes a feed and max # of tweets to display, default 15
@@ -159,17 +178,25 @@ $(document).ready(function(){
     if (fadeInDelay) $tweetFeed.hide();
     //CREATE NEW TWEET ELEMENTS
     for (let i = 0; i < maxTweets; i++ ) {
+      //build tweet element, avatar, user name, timestamp, message w/tags
       let tweet = feed[index];
+      let wrappedMessage = wrapTags(tweet.message);
       let timeStamp = relativeDate(tweet.created_at);     
       let $tweet = $(`<div class="tweet">                     
-                        <div class="tweet-message"> ${tweet.message}</div>
+                        <div class="tweet-message"> ${wrappedMessage}</div>
                       </div>`);
       let $tweetHeader = $(`<div class="tweet-header"> 
                               <img class="tweet-avatar" src="${avatars[tweet.user]}" />
                               <div class="user">@${tweet.user}</div>
                               <div class="time-stamp"> ${timeStamp} </div>
                          </div>`).prependTo($tweet);
-                  
+          
+      //add tags to tag stream
+      // getTags(tweet.message).forEach((tag)=>{
+      //   streams.tags[tag] = streams.tags[tag] || [];
+      //   let tagStream = streams.tags[tag];
+      //   if (tagStream.indexOf(tweet) === -1) tagStream.push(tweet);
+      // })                 
       
       //display @users feed - click function
       $tweetHeader.on("click", function(){
@@ -177,16 +204,21 @@ $(document).ready(function(){
         $feedHeaderTitle.text("@"+tweet.user)
         $('#header-avatar').attr('src', avatars[tweet.user])
         $headerAvatarContainer.hide().fadeIn(fadeInDelay);
-        //update feed, reset pageNum to 1, render feed
-        currentFeed = streams.users[tweet.user];
-        pageNum = 1; $pageNum.text(pageNum);
-        renderTweets(currentFeed, maxTweetsUserSetting, 500);
+        //change the feed
+        changeFeed(streams.users[tweet.user]);
       })
       
+
 
       $tweet.appendTo($tweetFeed);
       index -= 1;
     }
+
+    //display tag - click function
+    $('.tag').on("click", function(e){
+      let tagName = $(e.currentTarget).text();
+      changeFeed(streams.tags[tagName]);
+    })
 
     if (fadeInDelay) $tweetFeed.fadeIn(fadeInDelay);
 
@@ -198,9 +230,15 @@ $(document).ready(function(){
   }
 
   //returns a string with all #tags wrapped in div
-  //
-  function wrapTags(message) {
-
+  function wrapTags(message) {  
+    return message.split(" ").map((str)=>{
+      return str[0] === '#' ? `<div class="tag">${str}</div>` : str; 
+    }).join(" ");
+  }
+  
+  //return an array of tags in a mesage
+  function getTags(message) {
+    return message.match(/\#[a-z]*/g) || [];
   }
 
   ///find a js library for this, man

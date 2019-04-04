@@ -106,7 +106,16 @@ input {
     color: #9262bf;
     font-style: oblique;
     padding-bottom: 0.5rem;
-   
+    display: flex;
+    align-items: baseline;
+}
+
+
+
+
+.tag {
+    color: #c88ac1;
+    cursor: pointer;
 }
 
 .user {
