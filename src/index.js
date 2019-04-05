@@ -17,6 +17,7 @@ $(document).ready(function(){
   let $headerAvatarContainer =  $('#header-avatar-container').hide();
   let $userSection = $('#user-section').hide();
   let $tweetFeedContainer = $('#tweet-feed-container').hide();
+  let $selectAvatarContainer = $('#select-avatar-container')
 
   //add some avatar images
   streams.users.images = {};
@@ -39,7 +40,18 @@ $(document).ready(function(){
   //keeps track of the current feed, for refresh purposes
   let currentFeed = streams.home;
 
+  streams.home.cachedLength = streams.home.length;
+  
 
+  //add avatar selection
+  // let avIcons = [];
+  // for(let i = 0; i < 6; i++) {
+  //   avatarURLs.push(`images/avatars/${i}.jpg`)
+  // }
+
+  // avatarsURLs.forEach(url => {
+  //   $selectAvatarContainer.append()
+  // })
 
   //****  CLICK EVENTS FOR BUTTONS  *****
 
@@ -58,6 +70,7 @@ $(document).ready(function(){
     $newMessage.attr('placeholder', `what's on your mind, ${newUser}?`)
     $(`<div id="user">@${newUser}</div>`)
       .on("click", function(){
+        $headerAvatarContainer.hide();
         changeFeed(streams.users[newUser]);
       }).hide().prependTo($('#new-tweet-container')).fadeIn(1000);
     
@@ -165,11 +178,9 @@ $(document).ready(function(){
   }
 
   // RENDER TWEETS 
-  //takes a feed and max # of tweets to display, default 15
-  //@fadeInDelay - milliseconds to fade feed in, default no fade
-  function renderTweets(feed, maxTweets = 8, fadeInDelay) {
-    //make sure tweet contain is correct size
-       //$tweetFeed.css('min-height', (maxTweets * 40) +"px")  //px for each tweet
+  //takes a feed and max # of tweets to display,
+  //@slideDownDelay - milliseconds to fade feed in, default no fade
+  function renderTweets(feed, maxTweets = 8, slideDownDelay) {
     //start at latest tweet in current page
     let index = feed.length - 1 - ((pageNum-1) * maxTweets) 
 
@@ -193,7 +204,7 @@ $(document).ready(function(){
     $('.tweet').remove(); 
     if (maxTweets < 1) $('<div class="tweet non-tweet">no tweets yet...</div>').appendTo($tweetFeed)
 
-    if (fadeInDelay) $tweetFeed.hide();
+    if (slideDownDelay) $tweetFeed.hide();
     //CREATE NEW TWEET ELEMENTS
     for (let i = 0; i < maxTweets; i++ ) {
       //build tweet element, avatar, user name, timestamp, message w/tags
@@ -213,12 +224,7 @@ $(document).ready(function(){
 
       //display @users feed - click function
       $tweetHeader.on("click", function(){
-        //change/display user name and avatar
-        // $feedHeaderTitle.text("@"+tweet.user)
-        // $('#header-avatar').attr('src', avatars[tweet.user])
-        // $headerAvatarContainer.hide().fadeIn(fadeInDelay);
         changeHeader("@"+tweet.user, avatars[tweet.user])
-        //change the feed
         changeFeed(streams.users[tweet.user]);
       })
       
@@ -233,7 +239,7 @@ $(document).ready(function(){
       changeFeed(streams.tags[tagName]);
     });
 
-    if (fadeInDelay) $tweetFeed.slideDown(fadeInDelay);
+    if (slideDownDelay) $tweetFeed.slideDown(slideDownDelay);
 
   }
 
