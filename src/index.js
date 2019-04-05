@@ -3,7 +3,7 @@ $(document).ready(function(){
   //select some useful jQuery objects from DOM
   let $tweetFeed = $('#tweet-feed')
   let $pauseButton = $('#pause-button') 
-  let $allTweetsButton = $('#all-tweets-button');
+  let $homeButton = $('.home-button');
   let $feedHeaderTitle = $('#feed-header-title');
   let $tweetsPerPageSetting = $('#tweets-per-page');
   let $pageNum = $('#page-number');
@@ -72,8 +72,8 @@ $(document).ready(function(){
       .on("click", function(){
         $headerAvatarContainer.hide();
         changeFeed(streams.users[newUser]);
-      }).hide().prependTo($('#new-tweet-container')).fadeIn(1000);
-    
+      }).prependTo($('#user-and-home-container'));
+
     $userSection.fadeIn(1000);
     $tweetFeedContainer.slideDown(1000);
   })
@@ -92,7 +92,7 @@ $(document).ready(function(){
     streams.home.push(newTweet);
     streams.users[newUser].push(newTweet);
     $newMessage.val('');
-    renderTweets(currentFeed, maxTweetsUserSetting);
+    renderTweets(currentFeed, maxTweetsUserSetting, 0, "update");
   })
 
   $newMessage.on("keyup", function(key){
@@ -112,7 +112,7 @@ $(document).ready(function(){
   });
  
   //home feed button
-  $allTweetsButton.on("click", function(){
+  $homeButton.on("click", function(){
     $headerAvatarContainer.hide();
     changeFeed(streams.home);
   })
@@ -123,30 +123,28 @@ $(document).ready(function(){
     if (key.which === 13) {
       maxTweetsUserSetting = $tweetsPerPageSetting.val();
       pageNum = 1; $pageNum.text(pageNum);
-      renderTweets(currentFeed, maxTweetsUserSetting);
+      renderTweets(currentFeed, maxTweetsUserSetting, 300);
     }
   })
 
   //change pages w/ next and prev buttons
   $nextPage.on("click", function() {
     $pageNum.text(++pageNum)
-    if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting);
+    if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting, 300);
   });
 
   $prevPage.on("click", function() {
     $pageNum.text(--pageNum)
-    if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting);
+    if (pageNum) renderTweets(currentFeed, maxTweetsUserSetting, 300);
   });
 
 
-
-  
 
   // ****** REFRESH TWEET FEED **** 
   //refeshes automatically every second
 
   var refreshTweets = function(){
-    if ($pauseButton.val() === "pause") renderTweets(currentFeed, maxTweetsUserSetting);
+    if ($pauseButton.val() === "pause") renderTweets(currentFeed, maxTweetsUserSetting, 0, "update");
     setTimeout(refreshTweets, 1000);
   };
   refreshTweets();
@@ -179,36 +177,56 @@ $(document).ready(function(){
 
   // RENDER TWEETS 
   //takes a feed and max # of tweets to display,
-  //@slideDownDelay - milliseconds to fade feed in, default no fade
-  function renderTweets(feed, maxTweets = 8, slideDownDelay) {
+  //@fadeInDelay - milliseconds to fade feed in, default no fade
+  function renderTweets(feed, maxTweets = 8, fadeDelay, update) {
     //start at latest tweet in current page
-    let index = feed.length - 1 - ((pageNum-1) * maxTweets) 
+    
+    //let start by just re-render from the previous point
+    feed.cachedLength = feed.cachedLength || feed.length; //initialize cache if undefined
+    let numNewTweets = feed.length - feed.cachedLength; 
+
+    if (update) {
+      if (numNewTweets === 0)  return;
+      maxTweets = numNewTweets > 0 ? numNewTweets: maxTweets;
+      var $lastTweet = $tweetFeed.children().last();
+    }
+    else $('.tweet').remove(); //remove all tweets
+
+    //slice out only the tweets we want to display
+
+    let endIndex = feed.length - ((pageNum-1) * maxTweets)
 
     //test if it's the last page
-    if (maxTweets > index + 1) {
-      maxTweets = index + 1;
+    if (maxTweets > endIndex) {
+      maxTweets = endIndex;
       $nextPage.attr('disabled', true);
     } else { 
       $nextPage.attr('disabled', false);;
     }
 
+    let startIndex = endIndex - maxTweets; 
+
+    let feedSlice = feed.slice(startIndex, endIndex)
+
     //test if for first page
-    if (index === feed.length - 1) {
+    if (pageNum === 1) { // (index === feed.length - 1) {
       $prevPage.attr('disabled', true);
     } else {
       $prevPage.attr('disabled', false);;
     }
     
-    //remove some tweets
-    //if (index >= 0) 
-    $('.tweet').remove(); 
     if (maxTweets < 1) $('<div class="tweet non-tweet">no tweets yet...</div>').appendTo($tweetFeed)
 
-    if (slideDownDelay) $tweetFeed.hide();
+
+    if (fadeDelay) $tweetFeed.hide()//fadeOut(fadeDelay);
     //CREATE NEW TWEET ELEMENTS
-    for (let i = 0; i < maxTweets; i++ ) {
+    
+    
+   
+   
+    
+    feedSlice.forEach( tweet => {
       //build tweet element, avatar, user name, timestamp, message w/tags
-      let tweet = feed[index];
       let wrappedMessage = wrapTags(tweet.message);
       let timeStamp = relativeDate(tweet.created_at);     
       let $tweet = 
@@ -228,9 +246,24 @@ $(document).ready(function(){
         changeFeed(streams.users[tweet.user]);
       })
       
-      $tweet.appendTo($tweetFeed);
-      index -= 1;
-    }
+      if (update) {
+        $tweet.hide().prependTo($tweetFeed).slideDown(1000);
+        if ($tweetFeed.children().length > maxTweetsUserSetting) {
+          $tweetFeed.children().last().prependTo('#tweet-feed-trash-collector').slideUp(1000);
+        }
+        // $lastTweet.slideUp(1000, function() { $(this).remove() })
+        // $lastTweet = $lastTweet.prev();
+      } else {
+        $tweet.prependTo($tweetFeed);
+      }
+      
+      //remove extra tweets
+      console.log($tweetFeed.children().length)
+
+    })
+
+    //update cache length - refers to previous feed length
+    feed.cachedLength = feed.length;
 
     //display tag - click function
     $('.tag').on("click", function(e){
@@ -239,7 +272,8 @@ $(document).ready(function(){
       changeFeed(streams.tags[tagName]);
     });
 
-    if (slideDownDelay) $tweetFeed.slideDown(slideDownDelay);
+    //fade in the feed
+    if (fadeDelay) $tweetFeed.fadeIn(fadeDelay);
 
   }
 
@@ -287,7 +321,8 @@ $(document).ready(function(){
     // let hrs = date.getHours(); 
    
     // if (tweetDate.getDay() === date.getDay()) {
-    //   if (hrs > tweetHrs) return (hrs - tweetHrs) + " hrs ago";
+    //   if (hrs > tweetHrs) retweet.hide().prependTo($tweetFeed).slideDown(1000);
+        // $turn (hrs - tweetHrs) + " hrs ago";
 
     //   if (min > tweetMin) return (min - tweetMin) + " min ago";
 

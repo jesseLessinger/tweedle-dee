@@ -8,9 +8,7 @@ div {
     padding: 3px;
 }
 
-input {
-    margin: 0 0.5rem;
-}
+
 
 #all-contents {
     padding: 0;
@@ -80,13 +78,14 @@ input {
 #feed-header {
     display: flex;
     flex-direction: column;
-    margin-left: -2rem;
+    margin: 0 -1rem;
 }
 
 #feed-settings, #head-avatar-container {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    justify-content: space-between;
 }
 
 #header-avatar {
@@ -142,7 +141,9 @@ input {
     font-weight: 200;
 }
 
-
+.home-button {
+    cursor: pointer;
+}
 
 
 .tag {
@@ -178,4 +179,32 @@ input {
 .flex-column {
     display: flex;
     flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.btn {
+    margin: 0;
+}
+
+#new-tweet-message {
+    margin-bottom: .3rem;
+}
+
+#user-and-home-container {
+    justify-content: space-between;
+}
+
+#tweet-feed {
+    padding-bottom: 0;
+    margin: 0 1rem;
+}
+
+#tweet-feed-trash-collector {
+    padding-top: 0;
+    margin: 0 1rem;
 }

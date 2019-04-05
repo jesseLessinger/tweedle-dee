@@ -16,7 +16,7 @@
 
       <header id="header" >
         <!-- <input id="all-tweets-button" type="button" value="Twiddle Dee" class="btn btn-primary" /> -->
-        <h1 id="all-tweets-button">Tweedle Dee</h1>
+        <h1 class="home-button">Tweedle Dee</h1>
       </header>
 
 
@@ -24,7 +24,7 @@
 
         <div id="new-user-container">
           <div id="select-avatar-container" class="center">
-            
+
           </div>
           <div class="flex-column">
             <p class="center">Welcome to Tweeddle Dee.</p>
@@ -38,6 +38,10 @@
         <div id="user-section">
           <img id="user-section-avatar" />
           <div id="new-tweet-container">
+            <div id="user-and-home-container" class="flex-row">
+              <!-- <div id="user"></div> -->
+              <div class="home-button">home</div>
+            </div>
             <textarea id="new-tweet-message" rows="3" cols="50" maxlength="150" placeholder="what's on your mind, dood?"></textarea>
             <input id="post-message-button" type="button" class="btn btn-primary" value="post">
           </div>
@@ -49,25 +53,33 @@
 
           <div id="feed-header">
             <div id="feed-settings">
-              <input id="pause-button" type="button" value="pause" class="btn btn-info" />
-              <input id="tweets-per-page" type="text" value="5" size="1"> 
-              <div>tweets per page</div>
+              
+              <div class="flex-row">
+                <input id="tweets-per-page" type="text" value="5" size="1"> 
+                <div>tweets per page</div>
+              </div>
+
+              <div class="flex-row">
+                <input id="prev-page" type="button" class="btn btn-info" value="<" />
+                <div>page</div> 
+                <div id="page-number">1</div>
+                <input id="next-page" type="button" class="btn btn-info" value=">" />
+              </div>
+              <div class="flex-row" style="justify-content: flex-end">
+                <input id="pause-button" type="button" value="pause" class="btn btn-info" />
+              </div>
             </div>
+            
             <div id="header-avatar-container">
               <img id="header-avatar" />
               <h2 id="feed-header-title"></h2>
             </div>
           </div>
-                    
+          
           <div id="tweet-feed"></div>
-
-          <div id="feed-footer" class="center">
-            <input id="prev-page" type="button" class="btn btn-info" value="<" />
-           <div>page</div> 
-           <div id="page-number">1</div>
-            <!-- <input id="page-number" type="text" value="1" size="1" /> -->
-           <input id="next-page" type="button" class="btn btn-info" value=">" />
-          </div>
+          <div id="tweet-feed-trash-collector"></div>
+          <!-- <div id="feed-footer" class="center"></div> -->
+            
           
         </div>
         
