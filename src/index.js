@@ -56,6 +56,7 @@ $(document).ready(function(){
   //****  CLICK EVENTS FOR BUTTONS  *****
 
   //register new user botton
+ 
   $newUserButton.on("click", function(){
     newUser = $newUser.val();
     if (newUser.length === 0) { //check if something was actually entered
@@ -164,6 +165,7 @@ $(document).ready(function(){
   updateTags();
 
 
+  $newUser.focusin().select();
 
 
   //  *********** HELPER FUNCTIONS  **********
@@ -220,10 +222,6 @@ $(document).ready(function(){
 
     if (fadeDelay) $tweetFeed.hide()//fadeOut(fadeDelay);
     //CREATE NEW TWEET ELEMENTS
-    
-    
-   
-   
     
     feedSlice.forEach( tweet => {
       //build tweet element, avatar, user name, timestamp, message w/tags
